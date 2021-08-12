@@ -1,0 +1,505 @@
+﻿@model Prueba.Application.Dtos.Personal.CalendarioListarResponseDto
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> Periodos = (List<SelectListItem>)ViewBag.Periodos;
+    List<SelectListItem> Meses = (List<SelectListItem>)ViewBag.Meses;
+}
+
+<h1 class="h2 mb-4 text-gray-800 text-center" style="display :none;">Programación Mensual</h1>
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Lista Calendario</strong>
+    </div>
+    <div class="card-body">
+
+        @using (Html.BeginForm(FormMethod.Get))
+        {
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button type="button" id="btn_limpiar" class="btn btn-primary" style="width: 50px;" onclick="btn_limpiar_click();">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                        <input asp-for="documento" type="text" name="documento" id="documento"
+                               placeholder="Buscar por documento" class="form-control" maxLength="9" />
+                        <div class="input-group-append ">
+                            <button type="submit" id="btn_buscar" class="btn btn-primary" style="width: 50px;">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group">
+                                @Html.DropDownList("anio", Periodos, new { @class = "form-control", id = "anio" })
+                                <div class="input-group-append ">
+                                    <button type="submit" id="btn_refresh" class="btn btn-success" style="width: 50px;">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group">
+                                @Html.DropDownList("mes", Meses, new { @class = "form-control", id = "mes" })
+                                <div class="input-group-append ">
+                                    <button type="submit" id="btn_refresh" class="btn btn-success" style="width: 50px;">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+        }
+
+        <div class="row">
+            <div class="col-9">
+                <div class="table-responsive">
+                    <table class="table table-bordered tablecalendar thead-blue" id="tableCalendario" style="width:100%;" cellspacing="0">
+                        <thead class="thead-blue">
+                            <tr>
+                                <th class="text-md-center th-blue cssMes">
+                                    <button type="button" id="btn_Anterior" class="btn btn-blue" onclick="btn_Anterior_click();">
+                                        <i class="fas fa-chevron-circle-left fa-left"></i>
+                                    </button>
+                                </th>
+                                <th class="text-md-center th-blue" colspan="5">
+                                    <span class="spnTitle">@Model.NameMes</span>
+                                </th>
+                                <th class="text-md-center th-blue cssMes">
+                                    <button type="button" id="btn_Siguiente" class="btn btn-blue" onclick="btn_Siguiente_click();">
+                                        <i class="fas fa-chevron-circle-right fa-right"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Lunes</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Martes</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Miércoles</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Jueves</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Viernes</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Sábado</th>
+                                <th scope="col" class="text-md-center th-blue" width="14%">Domingo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Semanas)
+                            {
+                                <tr style="height:100px;">
+                                    @{
+                                        var tdLunes = (item.Lunes.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdMartes = (item.Martes.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdMiercoles = (item.Miercoles.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdJueves = (item.Jueves.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdViernes = (item.Viernes.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdSabado = (item.Sabado.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                        var tdDomingo = (item.Domingo.FlagMesAnterior == 1 ? "cssMesAnt" : "cssMes");
+                                    }
+                                    <td class="text-md-center @tdLunes">
+                                        <div class="divright">
+                                            @if (item.Lunes.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdLunes">
+                                            @Html.DisplayFor(modelItem => item.Lunes.Dia)
+                                        </label>
+                                        @if (item.Lunes.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Lunes.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Lunes.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Lunes.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Lunes.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Lunes.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </td>
+                                    <td class="text-md-center @tdMartes">
+                                        <div class="divright">
+                                            @if (item.Martes.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdMartes">
+                                            @Html.DisplayFor(modelItem => item.Martes.Dia)
+                                        </label>
+                                        @if (item.Martes.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Martes.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Martes.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Martes.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Martes.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Martes.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-md-center @tdMiercoles">
+                                        <div class="divright">
+                                            @if (item.Miercoles.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdMiercoles">
+                                            @Html.DisplayFor(modelItem => item.Miercoles.Dia)
+                                        </label>
+                                        @if (item.Miercoles.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Miercoles.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Miercoles.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Miercoles.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Miercoles.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Miercoles.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-md-center @tdJueves">
+                                        <div class="divright">
+                                            @if (item.Jueves.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdJueves">
+                                            @Html.DisplayFor(modelItem => item.Jueves.Dia)
+                                        </label>
+                                        @if (item.Jueves.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Jueves.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Jueves.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Jueves.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Jueves.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Jueves.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-md-center @tdViernes">
+                                        <div class="divright">
+                                            @if (item.Viernes.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdViernes">
+                                            @Html.DisplayFor(modelItem => item.Viernes.Dia)
+                                        </label>
+                                        @if (item.Viernes.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Viernes.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Viernes.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Viernes.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Viernes.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Viernes.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-md-center @tdSabado">
+                                        <div class="divright">
+                                            @if (item.Sabado.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdSabado">
+                                            @Html.DisplayFor(modelItem => item.Sabado.Dia)
+                                        </label>
+                                        @if (item.Sabado.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Sabado.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Sabado.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Sabado.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Sabado.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Sabado.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="text-md-center @tdDomingo">
+                                        <div class="divright">
+                                            @if (item.Domingo.FlagFalto == 1)
+                                            {
+                                                <i class="fas fa-backspace fa-red"></i>
+                                            }
+                                        </div>
+
+                                        <label class="@tdDomingo">
+                                            @Html.DisplayFor(modelItem => item.Domingo.Dia)
+                                        </label>
+                                        @if (item.Domingo.FlagMesAnterior == 0)
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6 text-center">
+                                                    @if (item.Domingo.CodigoHorario == "VAC")
+                                                    {
+                                                        <span class="card cardVac border-left-success border-success float-md-left bold">
+                                                            <span class="textVac">
+                                                                @Html.DisplayFor(modelItem => item.Domingo.CodigoHorario)
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (item.Domingo.CodigoHorario != "")
+                                                    {
+                                                        <span class="card cardVac border-left-secondary float-md-left bold">
+                                                            @Html.DisplayFor(modelItem => item.Domingo.CodigoHorario)
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="float-md-left">
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-6 text-center">
+                                                    <span class="float-md-right">
+                                                        @if (item.Domingo.CodigoHorario == "VAC")
+                                                        {
+                                                            <i class="fas fa-umbrella-beach fa-vacation"></i>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-4">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    function btn_limpiar_click() {
+        var textodocumento = document.getElementById("documento");
+        textodocumento.value = "";
+
+        var buscar = document.getElementById("btn_buscar");
+        buscar.click();
+    }
+
+    function btn_Anterior_click() {
+        var cboMes = document.getElementById("mes");
+        var update = 0;
+        var buscar = document.getElementById("btn_buscar");
+
+        if (parseInt(cboMes.value) > 1) {
+            update = parseInt(cboMes.value) - 1;
+            cboMes.value = update;
+            buscar.click();
+
+        }
+        else {
+            cboMes.value = 12;
+            buscar.click();
+
+        }
+    }
+
+    function btn_Siguiente_click() {
+
+        var cboMes = document.getElementById("mes");
+        var update = 0;
+        var buscar = document.getElementById("btn_buscar");
+
+
+        if (parseInt(cboMes.value) < 12) {
+            update = parseInt(cboMes.value) + 1;
+            cboMes.value = update;
+            buscar.click();
+
+        } else {
+            cboMes.value = 1;
+            buscar.click();
+        }
+        
+    }
+
+
+   
+
+</script>

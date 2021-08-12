@@ -1,0 +1,9 @@
+﻿.menuColor {
+    background-color: #2a3542;
+    background-image: linear-gradient(180deg, #2a3542 10%, #224abe 100%);
+    background-size: cover;
+}
+
+.titlecolor {
+    color: #4E6DAF;
+}

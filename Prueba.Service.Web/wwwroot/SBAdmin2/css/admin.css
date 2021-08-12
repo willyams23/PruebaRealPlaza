@@ -1,0 +1,94 @@
+﻿.menuColor {
+    background-color: #2a3542;
+    background-image: linear-gradient(180deg, #2a3542 10%, #224abe 100%);
+    background-size: cover;
+}
+
+.titlecolor {
+    color: #4E6DAF;
+}
+
+input:disabled, label:disabled, .lbl-disabled, select:disabled {
+    background-color: #e9ecef !important;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+td.cssMesAnt {
+    background-color: #EEEEEE;
+    opacity: 0.35;
+}
+td.cssMes {
+    
+}
+
+label.cssMesAnt {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+label.cssMes {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.tablecalendar {
+    border: 1px solid #646464;
+}
+
+.textVac {
+    color: #4E73DF;
+}
+
+.cardVac {
+    padding: 3px;
+}
+
+.divright {
+    margin: 0 0 0 0;
+    vertical-align: top !important;
+    float: right !important;
+}
+
+.divleft {
+    margin: 0 0 0 0;
+    vertical-align: top !important;
+    float: left !important;
+}
+
+.fa-red {
+    color: #FF6464;
+    opacity: 0.90;
+    font-size: 25px;
+    float: left !important;
+}
+
+.fa-vacation {
+    color: #1CC88A;
+    opacity: 0.80;
+    font-size: 30px;
+}
+
+.th-blue {
+    border: 1px solid #2346A9 !important;
+}
+
+.spnTitle {
+    font-size: 70px;
+    font-weight: bold;
+}
+
+.fa-left {
+    font-size: 70px;
+}
+
+.fa-right {
+    font-size: 70px;
+}
+
+.btn-blue {
+    color: #fff;
+    background-color: #2346A9;
+}

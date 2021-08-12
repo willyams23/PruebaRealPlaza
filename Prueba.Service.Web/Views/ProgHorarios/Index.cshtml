@@ -1,0 +1,144 @@
+﻿@{
+    ViewData["Title"] = "Programación de Horarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> Departamentos = (List<SelectListItem>)ViewBag.Departamentos;
+    List<SelectListItem> Periodos = (List<SelectListItem>)ViewBag.Periodos;
+    List<SelectListItem> Meses = (List<SelectListItem>)ViewBag.Meses;
+    List<SelectListItem> Horarios = (List<SelectListItem>)ViewBag.Horarios;
+
+}
+
+<h1 class="h2 mb-4 text-gray-800 text-center" style="display :none;">Programación de Horarios</h1>
+
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Programación de Horarios</strong>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <label for="lbl_Usuario" class="col-sm-2 col-form-label">Usuario :</label>
+            <div class="col-sm-10">
+                <label id="lbl_Usuario" class="form-control lbl-disabled" formControlName="lbl_Usuario">William Levita</label>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="lst_Departamento" class="col-sm-2 col-form-label">Dpto / Oficina :</label>
+            <div class="col-sm-10">
+                @Html.DropDownList("lst_Departamento", Departamentos, new { @class = "form-control", id = "lst_Departamento" })
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="lst_Servicio" class="col-sm-2 col-form-label">Servicio / Unidad :</label>
+            <div class="col-sm-10">
+                <select id="lst_Servicio" name="lst_Servicio" class="form-control"></select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="lst_Anio" class="col-sm-2 col-form-label">Periodo :</label>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col">
+                        @Html.DropDownList("lst_Anio", Periodos, new { @class = "form-control", id = "lst_Anio" })
+                    </div>
+                    <div class="col">
+                        @Html.DropDownList("lst_Mes", Meses, new { @class = "form-control", id = "lst_Mes" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="lst_Horario" class="col-sm-2 col-form-label">Codigo Horario :</label>
+            <div class="col-sm-10">
+                @Html.DropDownList("lst_Horario", Horarios, new { @class = "form-control", id = "lst_Anio" })
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">&nbsp;</label>
+            <div class="col-sm-10">
+
+                <a href="#" class="btn btn-primary">
+                    <span class="icon">
+                        <i class="fas fa-flag"></i>
+                    </span>
+                    <span class="text">Buscar</span>
+                </a>
+
+                <a href="#" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Split Button Success</span>
+                </a>
+
+                <a href="#" class="btn btn-info btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
+                    <span class="text">Split Button Info</span>
+                </a>
+
+                <button type="submit" class="btn btn-primary btn-customized">Subscribe</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br />
+
+<form action="" method="post">
+    <!-- User's Credentials  -->
+    <fieldset class="form-group border p-3">
+        <legend class="w-auto">Filtro Busqueda</legend>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control username" id="username" placeholder="Username..." name="username">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control email" id="email" placeholder="Email..." name="email">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control password" id="password" placeholder="Password..." name="password">
+        </div>
+    </fieldset>
+    
+    <div class="form-group row text-right">
+        <div class="col">
+            <button type="submit" class="btn btn-primary btn-customized">Subscribe</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    var cboDepartamento = document.getElementById("lst_Departamento");
+    cboDepartamento.addEventListener("change", cboDepartamento_Changed);
+    cboDepartamento_Changed();
+
+    function cboDepartamento_Changed() {
+        fetch("@Url.Content("~/ProgHorarios/DepartamentoChanged")" + "?IdDepartamento=" + cboDepartamento.value)
+            .then(function (result) {
+                if (result.ok) {
+                    return result.json();
+                }
+            })
+            .then(function (data) {
+                cboServicio = document.getElementById("lst_Servicio");
+                cboServicio.innerHTML = "";
+
+                data.forEach(function (element) {
+                    let opt = document.createElement("option");
+                    opt.appendChild(document.createTextNode(element.text));
+                    opt.value = element.value;
+                    cboServicio.appendChild(opt);
+                })
+            })
+    }
+</script>

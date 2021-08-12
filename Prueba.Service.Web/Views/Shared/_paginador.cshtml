@@ -1,0 +1,145 @@
+﻿@model Prueba.Application.Dtos.Page.PaginacionDto
+<!--Funcionalidad: Páginas-->
+@{
+    int Inicial = 1;
+    var radio = 2;
+    var cantidadMaximaDePaginas = radio * 2 + 1;
+    var cantidadPaginas = Model.TotalPaginas;
+    int Final = (cantidadPaginas > cantidadMaximaDePaginas) ? cantidadMaximaDePaginas : cantidadPaginas;
+    if (Model.PaginaActual > radio + 1)
+    {
+        Inicial = Model.PaginaActual - radio;
+        if (cantidadPaginas > Model.PaginaActual + radio)
+        {
+            Final = Model.PaginaActual + radio;
+        }
+        else
+        {
+            Final = cantidadPaginas;
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-sm-5">
+
+    </div>
+    <div class="col-sm-5">
+        <p>
+            <nav aria-label="Page navigation thead-dark">
+                <ul class="pagination">
+
+                    @{
+                        Model.ValoresQueryString["page"] = 1;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+                    }
+
+                    <li class="page-item">
+                        <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                            <i class="fas fa-fast-backward"></i>
+                        </a>
+                    </li>
+
+
+                    @if (Model.PaginaActual == 1)
+                    {
+
+                        Model.ValoresQueryString["page"] = Model.PaginaActual - 1;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+
+                        <li class="page-item disabled">
+                            <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                                <i class="fas fa-backward"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        Model.ValoresQueryString["page"] = Model.PaginaActual - 1;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+
+                        <li class="page-item">
+                            <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                                <i class="fas fa-backward"></i>
+                            </a>
+                        </li>
+
+                    }
+
+
+                    @for (int i = Inicial; i <= Final; i++)
+                    {
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["page"] = i;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+
+                        if (i == Model.PaginaActual)
+                        {
+                            <li class="page-item active">
+                                @(Html.ActionLink(i.ToString(), null, Model.ValoresQueryString, new { @class = "page-link" }))
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                @(Html.ActionLink(i.ToString(), null, Model.ValoresQueryString, new { @class = "page-link" }))
+                            </li>
+                        }
+                    }
+
+
+
+                    @if (Model.PaginaActual == Model.TotalPaginas)
+                    {
+
+                        Model.ValoresQueryString["page"] = Model.TotalPaginas;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+
+                        <li class="page-item disabled">
+                            <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                                <i class="fas fa-forward"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+
+                        Model.ValoresQueryString["page"] = Model.PaginaActual + 1;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+
+                        <li class="page-item">
+                            <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                                <i class="fas fa-forward"></i>
+                            </a>
+                        </li>
+                    }
+
+
+                    @{
+                        Model.ValoresQueryString["page"] = Model.TotalPaginas;
+                        Model.ValoresQueryString["pageSize"] = Model.TamanioPagina;
+                        Model.ValoresQueryString["Search"] = Model.Search;
+                    }
+
+                    <li class="page-item">
+                        <a href="@Url.ActionLink(null, null, Model.ValoresQueryString)" class="page-link">
+                            <i class="fas fa-fast-forward"></i>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+        </p>
+    </div>
+    <div class="col-sm-2 text-lg-right">
+        <p class="bold">
+            <br />
+            @Model.TotalRegistros Registros
+        </p>
+    </div>
+</div>
